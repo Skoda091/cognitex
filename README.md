@@ -13,7 +13,7 @@ The following functionality is covered;
 * Update user attributes
 * Reset a forgotten password
 
-Online documentation is available [here]().
+Online documentation is available [here](https://hexdocs.pm/cognitex/0.1.0/api-reference.html).
 
 ## Installation
 
@@ -74,7 +74,7 @@ iex> Cognitex.sign_up("john.smith@example.com", "Test123", name: "John", family_
 }
 ```
 
-Full documentation is available [here]().
+Full documentation is available [here](https://hexdocs.pm/cognitex/0.1.0/api-reference.html).
 
 ### References
 
