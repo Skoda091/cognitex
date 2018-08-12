@@ -14,9 +14,6 @@ defmodule Cognitex do
       :world
 
   """
-  def hello do
-    :world
-  end
 
   @spec sign_up(String.t(), String.t(), [{atom(), String.t()}]) :: {:ok, map()} | {:error, map()}
   def sign_up(email, password, attrs) do
