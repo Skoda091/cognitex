@@ -56,7 +56,7 @@ First we will set up a new AWS Cognito user pool with the correct configuration.
 
 ### Licensing, thanks
 
-This workflow is released under the [MIT License](https://opensource.org/licenses/MIT).
+This library is released under the [MIT License](https://opensource.org/licenses/MIT).
 
 It is based on:
 * [cognito-phx](https://gitlab.com/azohra/cognito-phx/)
