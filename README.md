@@ -49,6 +49,32 @@ First we will set up a new AWS Cognito user pool with the correct configuration.
 4. Click the "edit client" link. Specify a name for your app and be sure to *disable* the client secret and *enable* the `ADMIN_NO_SRP_AUTH` option.
 5. Click "Create pool". Take note of the *Pool Id* at the top of the page and click on the apps page. Here, take note of the *App client id*.
 
+## Usage
+
+```elixir
+iex> Cognitex.sign_up("john.smith@example.com", "Test123", name: "John", family_name: "Smith")
+{:ok,
+  %{
+    "CodeDeliveryDetails" => %{
+      "AttributeName" => "email",
+      "DeliveryMedium" => "EMAIL",
+      "Destination" => "j***@e***.co"
+    },
+    "UserConfirmed" => false,
+    "UserSub" => "uuid"
+  }
+}
+
+iex> Cognitex.sign_up("john.smith@example.com", "Test123", name: "John", family_name: "Smith")
+{:error,
+  %{
+    message: "An account with the given email already exists.",
+    status: "UsernameExistsException"
+  }
+}
+```
+
+Full documentation is available [here]().
 
 ### References
 
