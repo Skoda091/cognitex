@@ -8,8 +8,8 @@ The following functionality is covered;
 
 * User registration
 * Confirm registration (with the confirmation code received from AWS, by email)
-* User authenntication
-* Fetch user data by access token
+* User authentication
+* Fetch user data by an access token
 * Fetch user data by username
 * Change user password
 * Update user attributes
@@ -43,7 +43,7 @@ config :aws,
 ```
 
 ## Set up AWS Cognito with the correct configuration
-First we will set up a new AWS Cognito user pool with the correct configuration.
+First, we will set up a new AWS Cognito user pool with the correct configuration.
 
 1. Visit your AWS console and go to the AWS Cognito service. Click on "Manage your User Pools" and click "Create a User Pool".
 2. Specify a name for your pool and click "Review Defaults".
