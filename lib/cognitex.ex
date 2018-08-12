@@ -6,15 +6,31 @@ defmodule Cognitex do
   alias Services.CognitoWrapper
 
   @doc """
-  Hello world.
+  Registers the user in the specified user pool and creates a user name, password, and user attributes defined in AWS Cognito service.
 
   ## Examples
 
-      iex> Cognitex.hello
-      :world
+      iex> Cognitex.sign_up("john.smith@example.com", "Test123", name: "John", family_name: "Smith")
+      {:ok,
+        %{
+          "CodeDeliveryDetails" => %{
+            "AttributeName" => "email",
+            "DeliveryMedium" => "EMAIL",
+            "Destination" => "j***@e***.co"
+          },
+          "UserConfirmed" => false,
+          "UserSub" => "uuid"
+        }
+      }
 
+      iex> Cognitex.sign_up("john.smith@example.com", "Test123", name: "John", family_name: "Smith")
+      {:error,
+        %{
+          message: "An account with the given email already exists.",
+          status: "UsernameExistsException"
+        }
+      }
   """
-
   @spec sign_up(String.t(), String.t(), [{atom(), String.t()}]) :: {:ok, map()} | {:error, map()}
   def sign_up(email, password, attrs) do
     input =
@@ -30,6 +46,22 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Confirms registration of a user.
+
+  ## Examples
+
+      iex> Cognitex.confirm("john.smith@example.com", "123456")
+      {:ok, %{}}
+
+      iex> Cognitex.confirm("john.smith@example.com", "123456")
+      {:error,
+        %{
+          message: "User cannot be confirm. Current status is CONFIRMED",
+          status: "NotAuthorizedException"
+        }
+      }
+  """
   @spec confirm(String.t(), String.t()) :: {:ok, map()} | {:error, map()}
   def confirm(email, confirmation_code) do
     input =
@@ -43,6 +75,33 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Authenticates registered user with credentials.
+
+  ## Examples
+
+      iex> Cognitex.authenticate("john.smith@example.com", "Test123")
+      {:ok,
+        %{
+          "AuthenticationResult" => %{
+            "AccessToken" => "<jwt_access_token>",
+            "ExpiresIn" => 3600,
+            "IdToken" => "<jwt_id_token>",
+            "RefreshToken" => "<jwt_refresh_token>",
+            "TokenType" => "Bearer"
+          },
+          "ChallengeParameters" => %{}
+        }
+      }
+
+      iex> Cognitex.authenticate("john.smith@example.com", "Test123")
+      {:error,
+        %{
+          message: "Incorrect username or password.",
+          status: "NotAuthorizedException"
+        }
+      }
+  """
   @spec authenticate(String.t(), String.t()) :: {:ok, map()} | {:error, map()}
   def authenticate(email, password) do
     input =
@@ -58,6 +117,32 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Gets the user attributes and metadata for a user by access token.
+
+  ## Examples
+
+      iex> Cognitex.get_user("<jwt_access_token>")
+      {:ok,
+        %{
+          user_attributes: %{
+            email: "john.smith@example.com",
+            email_verified: "true",
+            family_name: "Smith",
+            name: "John",
+            sub: "<sub>"
+          }
+        }
+      }
+
+      iex> Cognitex.get_user("<jwt_access_token>")
+      {:error,
+        %{
+          message: "Could not verify signature for Access Token",
+          status: "NotAuthorizedException"
+        }
+      }
+  """
   @spec get_user(String.t()) :: {:ok, map()} | {:error, map()}
   def get_user(token) do
     input =
@@ -70,6 +155,32 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Gets the specified user by username in a user pool as an administrator. Works on any user.
+
+  ## Examples
+
+      iex> Cognitex.admin_get_user("john.smith@example.com")
+      {:ok,
+        %{
+          user_attributes: %{
+            email: "john.smith@example.com",
+            email_verified: "true",
+            family_name: "Smith",
+            name: "John",
+            sub: "<sub>"
+          }
+        }
+      }
+
+      iex> Cognitex.admin_get_user("john.smith@example.com")
+      {:error,
+        %{
+          message: "User does not exist.",
+          status: "UserNotFoundException"
+        }
+      }
+  """
   @spec admin_get_user(String.t()) :: {:ok, map()} | {:error, map()}
   def admin_get_user(username) do
     input =
@@ -83,6 +194,22 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Changes the password for a specified user in a user pool.
+
+  ## Examples
+
+      iex> Cognitex.change_password("<jwt_access_token>", "Test123", "Test321")
+      {:ok, %{}}
+
+      iex> Cognitex.change_password("<jwt_access_token>", "Test123", "Test321")
+      {:error,
+        %{
+          message: "Incorrect username or password.",
+          status: "NotAuthorizedException"
+        }
+      }
+  """
   @spec change_password(String.t(), String.t(), String.t()) :: {:ok, map()} | {:error, map()}
   def change_password(token, previous_password, proposed_password) do
     input =
@@ -99,6 +226,22 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Allows a user to update a specific attribute.
+
+  ## Examples
+
+      iex> Cognitex.update_user_attributes("<jwt_access_token>", name: "Jane", family_name: "Doe")
+      {:ok, %{}}
+
+      iex> Cognitex.update_user_attributes("<jwt_access_token>", name: "Jane", family_name: "Doe")
+      {:error,
+        %{
+          message: "Invalid Access Token",
+          status: "NotAuthorizedException"
+        }
+      }
+  """
   @spec update_user_attributes(String.t(), [{atom(), String.t()}]) ::
           {:ok, map()} | {:error, map()}
   def update_user_attributes(token, attrs) do
@@ -113,6 +256,30 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Calling this API causes a message to be sent to the end user with a confirmation code that is required to change the user's password.
+
+  ## Examples
+
+      iex> Cognitex.forgot_password("john.smith@example.com")
+      {:ok,
+        %{
+          "CodeDeliveryDetails" => %{
+            "AttributeName" => "email",
+            "DeliveryMedium" => "EMAIL",
+            "Destination" => "j***@e***.co"
+          }
+        }
+      }
+
+      iex> Cognitex.forgot_password("john.smith@example.com")
+      {:error,
+        %{
+          message: "Username/client id combination not found.",
+          status: "UserNotFoundException"
+        }
+      }
+  """
   @spec forgot_password(String.t()) :: {:ok, map()} | {:error, map()}
   def forgot_password(username) do
     input =
@@ -126,6 +293,22 @@ defmodule Cognitex do
     end
   end
 
+  @doc """
+  Allows a user to enter a confirmation code to reset a forgotten password.
+
+  ## Examples
+
+      iex> Cognitex.confirm_forgot_password("123456", "john.smith@example.com", "Test456")
+      {:ok, %{}}
+
+      iex> Cognitex.confirm_forgot_password("123456", "john.smith@example.com", "Test456")
+      {:error,
+        %{
+          message: "Invalid code provided, please request a code again.",
+          status: "ExpiredCodeException"
+        }
+      }
+  """
   @spec confirm_forgot_password(String.t(), String.t(), String.t()) ::
           {:ok, map()} | {:error, map()}
   def confirm_forgot_password(code, username, password) do
