@@ -1,4 +1,5 @@
 # Cognitex
+[![hex.pm version](https://img.shields.io/badge/hex-v0.1.0-blue.svg)](https://hex.pm/packages/cognitex)
 
 A simple library to handle user management over [AWS Cognito service](https://aws.amazon.com/cognito/).
 
