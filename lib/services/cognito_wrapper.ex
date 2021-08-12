@@ -4,7 +4,7 @@ defmodule Services.CognitoWrapper do
   """
   @behaviour Services.Cognito
 
-  alias AWS.Cognito.IdentityProvider
+  alias AWS.CognitoIdentityProvider, as: IdentityProvider
 
   @doc """
   Registers the user in the specified user pool and creates a user name, password, and user attributes.
